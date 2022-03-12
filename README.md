@@ -7,6 +7,9 @@
 ## Build Setup
 
 ```bash
+# instalar un entorno virtual de python 3.x
+$ python3 -m venv virtualenv
+
 # instalar dependencias
 $ pip install -r requirements.txt
 
