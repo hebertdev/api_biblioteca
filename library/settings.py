@@ -67,6 +67,7 @@ MIDDLEWARE = [
 
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000', 
+    'http://192.168.1.67:3000',
 ]
 
 ROOT_URLCONF = 'library.urls'

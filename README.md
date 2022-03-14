@@ -28,6 +28,13 @@ $ python manage.py runserver
 $ desde el administrador de django dirigirse al modelo de libros
 $ e importar los datos books.json al modelo
 
+# activar funciones del usuario
+$ desde el administrador de django dirigirse al modelo de usuario
+$ entrar al administrador y activar is_manager para poder realizar
+$ acciones dentro de la app del frontend
+
+
+
 
 
 
