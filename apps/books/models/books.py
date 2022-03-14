@@ -3,6 +3,9 @@
 #django
 from django.db import models
 
+#user models
+from apps.users.models import User
+
 
 
 class Book(models.Model):
@@ -17,6 +20,8 @@ class Book(models.Model):
     )
     edition = models.CharField('edition' , blank=True , null=True , max_length=255)
     quantity = models.IntegerField(blank=False , null=False)
+
+    likes = models.ManyToManyField(User , related_name='likes' , blank=True)
 
     created = models.DateTimeField(auto_now_add=True)
     modified = models.DateTimeField(auto_now=True)
