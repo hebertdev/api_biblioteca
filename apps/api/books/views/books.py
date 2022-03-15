@@ -23,7 +23,7 @@ from apps.api.books.permissions.books import IsManager
 from apps.books.models import Book
 
 #serializers
-from apps.api.books.serializers import (BookModelSerializer) 
+from apps.api.books.serializers import (BookModelSerializer , LikeBookSerialzier) 
 
 
 class BookViewSet(mixins.ListModelMixin,
@@ -32,8 +32,6 @@ class BookViewSet(mixins.ListModelMixin,
                   mixins.DestroyModelMixin,
                   viewsets.GenericViewSet):
                   
-
-    serializer_class = BookModelSerializer
     queryset = Book.objects.all().order_by('-created')
     lookup_field = 'id'
     filter_backends = [filters.SearchFilter , filters.OrderingFilter , DjangoFilterBackend]
@@ -45,14 +43,21 @@ class BookViewSet(mixins.ListModelMixin,
         'publication_date':['contains'],
     }
     
+
     def get_permissions(self):
-        permissions = [IsAuthenticated ,IsManager]
-        
+        permissions = [IsAuthenticated]
+        if self.action in ['update' , 'partial_update' , 'destroy']:
+            permissions.append(IsManager)
         return [p() for p in permissions]
 
     def get_serializer_context(self):
         context = super(BookViewSet , self).get_serializer_context()
         return context
+
+    def get_serializer_class(self):
+        if self.action == 'likes':
+            return LikeBookSerialzier
+        return BookModelSerializer
 
     #action para editar , tambien se puede sobreescribir el metodo Update del mixin    
     @action(detail=True, methods=['put', 'patch'])
@@ -72,5 +77,31 @@ class BookViewSet(mixins.ListModelMixin,
     @action(detail=True, methods=['delete'])
     def delete_book(self, request, *args, **kwargs):
         return self.destroy(request, *args, **kwargs)
+
+    @action(detail=True, methods=['post'])
+    def likes(self, request, *args, **kwargs):
+        book = self.get_object()
+        serializer_class = self.get_serializer_class()
+        serializer = serializer_class(
+            book,
+            data={'user': request.user},
+            context={'book':
+                     book, 'user': request.user},
+        )
+
+        serializer.is_valid(raise_exception=True)
+        book = serializer.save()
+        data = BookModelSerializer(book).data
+        return Response(data, status=status.HTTP_200_OK)
+
+    @action(detail=False, methods=['get'])
+    def favorite_books(self, request , *args , **kwargs):
+        user = request.user
+        books = user.likes.all().order_by('-created')
+        data = {
+            'books':BookModelSerializer(books , many=True , context={'request':request} ).data
+        }
+        return Response(data)
+
 
 
