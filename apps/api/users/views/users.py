@@ -21,7 +21,7 @@ from rest_framework.permissions import (
 from apps.users.permissions import IsAccountOwner
 
 # serializer
-from apps.api.users.serializers.users import (UserLoginSerializer, UserModelSerializer ,ChangePasswordSerializer)
+from apps.api.users.serializers.users import (UserLoginSerializer, UserModelSerializer ,ChangePasswordSerializer , UserSignUpSerializer)
 from apps.api.users.serializers.profiles import ProfileModelSerializer    
 from apps.users.models import User
 
